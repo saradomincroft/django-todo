@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from datetime import date
 
 class Category(models.Model):
     name = models.CharField(max_length=100)
@@ -15,8 +16,10 @@ class Task(models.Model):
     description = models.TextField(blank=True, null=True)
     complete = models.BooleanField(default=False)
     created = models.DateTimeField(auto_now_add=True)
-    due = models.DateTimeField(blank=True, null=True)
-    category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True)
+    due = models.DateField(blank=True, null=True)
+    category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, blank=True)
+    def is_overdue(self):
+        return self.due and self.due < date.today() and not self.complete
 
     def __str__(self):
         return self.title
